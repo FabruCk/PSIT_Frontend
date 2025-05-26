@@ -1,5 +1,5 @@
-import api from './api';
-import { INVENTORY_MOVEMENT_ENDPOINTS } from './endpoints';
+import api from './config/api';
+import { INVENTORY_MOVEMENT_ENDPOINTS } from './config/endpoints';
 
 export const getInventoryMovements = async () => {
     const response = await api.get(INVENTORY_MOVEMENT_ENDPOINTS.BASE);

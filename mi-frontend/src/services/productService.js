@@ -1,5 +1,5 @@
-import api from './api';
-import { PRODUCT_ENDPOINTS } from './endpoints';
+import api from './config/api';
+import { PRODUCT_ENDPOINTS } from './config/endpoints';
 
 export const getProducts = async (params = {}) => {
     const response = await api.get(PRODUCT_ENDPOINTS.BASE, { params });

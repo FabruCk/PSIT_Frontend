@@ -1,5 +1,5 @@
-import api from './api';
-import { CATEGORY_ENDPOINTS } from './endpoints';
+import api from './config/api';
+import { CATEGORY_ENDPOINTS } from './config/endpoints';
 
 export const getCategories = async () => {
     const response = await api.get(CATEGORY_ENDPOINTS.BASE);

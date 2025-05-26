@@ -1,5 +1,5 @@
-import api from './api';
-import { SUPPLIER_ENDPOINTS } from './endpoints';
+import api from './config/api';
+import { SUPPLIER_ENDPOINTS } from './config/endpoints';
 
 export const getSuppliers = async () => {
     const response = await api.get(SUPPLIER_ENDPOINTS.BASE);

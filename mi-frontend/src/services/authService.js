@@ -1,5 +1,5 @@
-import api from './api';
-import { AUTH_ENDPOINTS } from './endpoints';
+import api from './config/api';
+import { AUTH_ENDPOINTS } from './config/endpoints';
 
 export const login = async (credentials) => {
     const response = await api.post(AUTH_ENDPOINTS.LOGIN, credentials);
