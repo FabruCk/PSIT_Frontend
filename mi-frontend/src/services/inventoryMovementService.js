@@ -1,3 +1,4 @@
+import api from './config/api';
 import { INVENTORY_MOVEMENT_ENDPOINTS } from './config/endpoints';
 
 /**
@@ -7,13 +8,10 @@ import { INVENTORY_MOVEMENT_ENDPOINTS } from './config/endpoints';
 export const getInventoryMovements = async () => {
     console.log('Llamando al servicio: getInventoryMovements');
     try {
-        const response = await fetch(INVENTORY_MOVEMENT_ENDPOINTS.BASE);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        // TODO: Procesar la respuesta de la API si es necesario (ej. data.results)
-        return data; // O data.results si la API devuelve un objeto con resultados
+        const response = await api.get(INVENTORY_MOVEMENT_ENDPOINTS.BASE);
+        console.log('Respuesta de getInventoryMovements:', response.data);
+        // Asumiendo que la API puede devolver un objeto con una propiedad 'results' si es paginada
+        return Array.isArray(response.data) ? response.data : response.data.results || [];
     } catch (error) {
         console.error('Error fetching inventory movements:', error);
         throw error; // Re-lanzar el error para que el componente lo maneje
@@ -28,56 +26,39 @@ export const getInventoryMovements = async () => {
 export const createInventoryMovement = async (movementData) => {
     console.log('Llamando al servicio: createInventoryMovement', movementData);
     try {
-        const response = await fetch(INVENTORY_MOVEMENT_ENDPOINTS.CREATE, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // TODO: Añadir cabeceras de autenticación si son necesarias
-            },
-            body: JSON.stringify(movementData),
-        });
-        if (!response.ok) {
-            // TODO: Manejar errores específicos de la API (ej. validación)
-            const errorData = await response.json();
-            throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
-        }
-        const data = await response.json();
-        // TODO: Procesar la respuesta de la API si es necesario
-        return data;
+        const response = await api.post(INVENTORY_MOVEMENT_ENDPOINTS.CREATE, movementData);
+        console.log('Respuesta del servidor (crear movimiento):', response.data);
+        return response.data;
     } catch (error) {
-        console.error('Error creating inventory movement:', error);
-        throw error; // Re-lanzar el error
+        console.error('Error al crear movimiento de inventario:', error);
+        if (error.response) {
+            console.error('Detalles del error de la API:', error.response.data);
+            throw new Error(error.response.data.message || 'Error al crear el movimiento de inventario');
+        }
+        throw error;
     }
 };
 
 /**
- * Actualiza un movimiento de inventario existente (actualización completa PUT).
+ * Actualiza un movimiento de inventario existente (actualización parcial PATCH).
+ * Usamos PATCH por ser más común para actualizaciones desde formularios.
  * @param {string|number} movementId El ID del movimiento a actualizar.
- * @param {Object} movementData Los datos actualizados completos del movimiento.
+ * @param {Object} movementData Los datos a actualizar.
  * @returns {Promise<Object>} Una promesa que resuelve con el movimiento actualizado.
  */
 export const updateInventoryMovement = async (movementId, movementData) => {
-    console.log('Llamando al servicio: updateInventoryMovement (PUT)', movementId, movementData);
+    console.log('Llamando al servicio: updateInventoryMovement (PATCH)', movementId, movementData);
     try {
-        const response = await fetch(INVENTORY_MOVEMENT_ENDPOINTS.UPDATE_FULL(movementId), {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                 // TODO: Añadir cabeceras de autenticación si son necesarias
-            },
-            body: JSON.stringify(movementData),
-        });
-        if (!response.ok) {
-            // TODO: Manejar errores específicos de la API
-             const errorData = await response.json();
-            throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
-        }
-        const data = await response.json();
-         // TODO: Procesar la respuesta de la API
-        return data;
+        const response = await api.patch(INVENTORY_MOVEMENT_ENDPOINTS.UPDATE_PARTIAL(movementId), movementData);
+        console.log(`Respuesta del servidor (actualizar movimiento ${movementId}):`, response.data);
+        return response.data;
     } catch (error) {
-        console.error('Error updating inventory movement (PUT):', error);
-        throw error; // Re-lanzar el error
+        console.error(`Error al actualizar movimiento ${movementId}:`, error);
+        if (error.response) {
+            console.error('Detalles del error de la API:', error.response.data);
+            throw new Error(error.response.data.message || `Error al actualizar el movimiento ${movementId}`);
+        }
+        throw error;
     }
 };
 
@@ -87,30 +68,26 @@ export const updateInventoryMovement = async (movementId, movementData) => {
  * @returns {Promise<void>} Una promesa que resuelve cuando el movimiento es eliminado.
  */
 export const deleteInventoryMovement = async (movementId) => {
-    console.log('Llamando al servicio: deleteInventoryMovement', movementId);
+    console.log(`Intentando eliminar movimiento con ID: ${movementId}`);
     try {
-        const response = await fetch(INVENTORY_MOVEMENT_ENDPOINTS.DELETE(movementId), {
-            method: 'DELETE',
-             headers: {
-                 // TODO: Añadir cabeceras de autenticación si son necesarias
-            }
-        });
-        if (!response.ok) {
-             // TODO: Manejar errores específicos de la API
-             // Las respuestas DELETE exitosas (204 No Content) no suelen tener cuerpo JSON
-             // Asegúrate de no intentar parsear JSON si la respuesta es 204
-             if (response.status !== 204) {
-                 const errorData = await response.json();
-                 throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
-             } else {
-                  throw new Error(`HTTP error! status: ${response.status}`);
-             }
-        }
-        // No retorna nada en caso de éxito (generalmente 204 No Content)
-        return; 
+        const response = await api.delete(INVENTORY_MOVEMENT_ENDPOINTS.DELETE(movementId));
+        console.log(`Movimiento ${movementId} eliminado con éxito. Estado:`, response.status);
+         // DELETE requests often return 204 No Content on success
+        if (response.status === 204) {
+            return; // Eliminado con éxito, no hay cuerpo de respuesta esperado
+        } else if (response.data) {
+             // Puede haber un cuerpo en la respuesta incluso para DELETE exitoso
+             return response.data;
+         } else {
+              return; // Manejar otros posibles códigos de éxito sin cuerpo
+         }
     } catch (error) {
-        console.error('Error deleting inventory movement:', error);
-        throw error; // Re-lanzar el error
+        console.error(`Error al eliminar movimiento ${movementId}:`, error);
+        if (error.response) {
+            console.error('Detalles del error de la API:', error.response.data);
+            throw new Error(error.response.data.message || `Error al eliminar el movimiento ${movementId}`);
+        }
+        throw error;
     }
 };
 
@@ -175,37 +152,6 @@ export const getInventoryMovementSummary = async () => {
         return data;
     } catch (error) {
         console.error('Error fetching inventory movement summary:', error);
-        throw error; // Re-lanzar el error
-    }
-};
-
-/**
- * Actualiza parcialmente un movimiento de inventario existente (PATCH).
- * @param {string|number} movementId El ID del movimiento a actualizar.
- * @param {Object} movementData Los datos parciales a actualizar.
- * @returns {Promise<Object>} Una promesa que resuelve con el movimiento actualizado.
- */
-export const updatePartialInventoryMovement = async (movementId, movementData) => {
-    console.log('Llamando al servicio: updatePartialInventoryMovement (PATCH)', movementId, movementData);
-    try {
-        const response = await fetch(INVENTORY_MOVEMENT_ENDPOINTS.UPDATE_PARTIAL(movementId), {
-            method: 'PATCH', // Usar PATCH para actualización parcial
-            headers: {
-                'Content-Type': 'application/json',
-                 // TODO: Añadir cabeceras de autenticación si son necesarias
-            },
-            body: JSON.stringify(movementData),
-        });
-        if (!response.ok) {
-            // TODO: Manejar errores específicos de la API
-             const errorData = await response.json();
-            throw new Error(`HTTP error! status: ${response.status}, details: ${JSON.stringify(errorData)}`);
-        }
-        const data = await response.json();
-         // TODO: Procesar la respuesta de la API
-        return data;
-    } catch (error) {
-        console.error('Error updating inventory movement (PATCH):', error);
         throw error; // Re-lanzar el error
     }
 };

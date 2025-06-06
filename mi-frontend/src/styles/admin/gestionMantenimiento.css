@@ -127,3 +127,17 @@ h1, h2 {
 .details-content p {
     margin: 0.5rem 0;
 }
+
+.action-button.complete {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.action-button.complete:hover {
+    background-color: #45a049;
+}

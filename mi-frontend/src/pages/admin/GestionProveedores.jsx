@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/admin/gestionProveedores.css';
-import { getSuppliers } from '../../services/supplierService';
+import { getSuppliers, createSupplier, deleteSupplier } from '../../services/supplierService';
 
 const GestionProveedores = () => {
     const [proveedores, setProveedores] = useState([]);
@@ -25,13 +25,23 @@ const GestionProveedores = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
+                console.log('Iniciando carga de proveedores...');
                 const proveedoresData = await getSuppliers();
-                setProveedores(Array.isArray(proveedoresData) ? proveedoresData : []);
+                console.log('Proveedores recibidos en el componente:', proveedoresData);
+
+                // Verificar si la respuesta es un array o un objeto con una propiedad results
+                const proveedoresArray = Array.isArray(proveedoresData) ? proveedoresData : 
+                                      proveedoresData.results ? proveedoresData.results : [];
+
+                console.log('Proveedores procesados en el componente:', proveedoresArray);
+
+                setProveedores(proveedoresArray);
                 setLoading(false);
             } catch (err) {
-                setError('Error al cargar datos');
+                console.error('Error al cargar proveedores en el componente:', err);
+                setError('Error al cargar datos de proveedores');
                 setLoading(false);
-                console.error('Error al cargar proveedores:', err);
             }
         };
         fetchData();
@@ -61,11 +71,41 @@ const GestionProveedores = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aquí irá la lógica para guardar el proveedor con los nuevos campos
-        console.log('Datos del formulario:', formData);
-        // TODO: Add API call to create or update supplier
-        setIsCreating(false);
-        // TODO: Refresh supplier list after saving
+        try {
+            setError(null); // Limpiar errores anteriores
+            // Aquí irá la lógica para guardar el proveedor con los nuevos campos
+            console.log('Datos del formulario:', formData);
+            
+            // TODO: Add API call to create or update supplier
+            // Lógica para crear o actualizar proveedor
+            if (selectedProveedor) { // Modo edición
+                // await updateSupplier(selectedProveedor.id, formData);
+                console.log('Funcionalidad de edición no implementada aún');
+            } else { // Modo creación
+                await createSupplier(formData);
+            }
+
+            // TODO: Refresh supplier list after saving
+            // Recargar la lista de proveedores después de guardar
+            const proveedoresActualizados = await getSuppliers();
+            setProveedores(Array.isArray(proveedoresActualizados) ? proveedoresActualizados : []);
+
+            setIsCreating(false);
+            // TODO: Clear selected supplier
+            setSelectedProveedor(null); // Clear selected supplier
+            setFormData({
+                name: '',
+                contact_email: '',
+                phone: '',
+                address: '',
+                tax_id: '',
+                website: '',
+                is_active: true,
+            });
+        } catch (error) {
+            console.error('Error al guardar el proveedor:', error);
+            setError(error.message || 'Error al guardar el proveedor');
+        }
     };
 
     const handleCancel = () => {
@@ -82,7 +122,46 @@ const GestionProveedores = () => {
         });
     };
 
-    // TODO: Implement handleEditProveedor and handleDeleteProveedor
+    const handleEditProveedor = (proveedor) => {
+        // Lógica para cargar datos del proveedor en el formulario para edición
+        setSelectedProveedor(proveedor);
+        setIsCreating(false); // Asegurarse de que no estamos en modo creación
+        // Aquí deberías copiar los datos del proveedor al formData para que aparezcan en el formulario
+        setFormData({
+            name: proveedor.name || '',
+            contact_email: proveedor.contact_email || '',
+            phone: proveedor.phone || '',
+            address: proveedor.address || '',
+            tax_id: proveedor.tax_id || '',
+            website: proveedor.website || '',
+            is_active: proveedor.is_active !== undefined ? proveedor.is_active : true,
+        });
+    };
+
+    const handleDeleteProveedor = async (id) => {
+        if (window.confirm('¿Está seguro de que desea eliminar este proveedor?')) {
+            try {
+                console.log(`Eliminando proveedor con ID: ${id}`);
+                await deleteSupplier(id);
+                console.log(`Proveedor ${id} eliminado con éxito.`);
+                
+                // Recargar la lista de proveedores después de eliminar
+                const proveedoresActualizados = await getSuppliers();
+                const proveedoresArray = Array.isArray(proveedoresActualizados) ? proveedoresActualizados : 
+                                          proveedoresActualizados.results ? proveedoresActualizados.results : [];
+                setProveedores(proveedoresArray);
+                
+                // Limpiar selección si el proveedor eliminado era el seleccionado
+                if (selectedProveedor && selectedProveedor.id === id) {
+                    setSelectedProveedor(null);
+                }
+
+            } catch (error) {
+                console.error('Error al eliminar proveedor:', error);
+                setError(error.message || 'Error al eliminar el proveedor');
+            }
+        }
+    };
 
     if (loading) {
         return <div>Cargando proveedores...</div>;
@@ -133,7 +212,18 @@ const GestionProveedores = () => {
                                                 >
                                                     Ver Detalles
                                                 </button>
-                                                {/* TODO: Implement Edit and Delete buttons */}
+                                                <button 
+                                                    onClick={() => handleEditProveedor(proveedor)}
+                                                    className="action-button edit"
+                                                >
+                                                    Editar
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDeleteProveedor(proveedor.id)}
+                                                    className="action-button delete"
+                                                >
+                                                    Eliminar
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
