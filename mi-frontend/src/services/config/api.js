@@ -72,9 +72,9 @@ api.interceptors.response.use(
                 return api(originalRequest);
             } catch (refreshError) {
                 console.error('Error al refrescar token:', refreshError);
-                localStorage.removeItem('token');
+            localStorage.removeItem('token');
                 localStorage.removeItem('refreshToken');
-                window.location.href = '/login';
+            window.location.href = '/login';
                 return Promise.reject(refreshError);
             }
         }

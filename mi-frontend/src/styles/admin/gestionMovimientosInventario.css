@@ -1,0 +1,233 @@
+/* mi-frontend/src/styles/admin/gestionMovimientosInventario.css */
+
+/* Estilos generales para la página */
+.gestion-movimientos-container {
+    padding: 30px;
+    background: linear-gradient(to bottom right, #1e1e1e, #3a1c71);
+    color: #ffffff;
+    min-height: 100vh;
+    font-family: sans-serif;
+}
+
+.gestion-movimientos-container h1 {
+    color: #ffffff;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.gestion-movimientos-container h2 {
+    color: #cccccc;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* Estilo para los contenedores de lista, creación y detalles/edición */
+.movimiento-form,
+.movimientos-list,
+.movimiento-details {
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+/* Estilo para los botones */
+.back-button,
+.create-button,
+.save-button,
+.cancel-button,
+.action-button,
+.close-button {
+    background-color: #3a3a3a;
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button {
+    margin-bottom: 20px; /* Added margin-bottom to separate from title */
+}
+
+.back-button:hover,
+.create-button:hover,
+.save-button:hover,
+.cancel-button:hover,
+.action-button:hover,
+.close-button:hover {
+    background-color: #4a4a4a;
+}
+
+.save-button {
+    background-color: #6200ea; /* Color de énfasis */
+}
+
+.save-button:hover {
+    background-color: #3700b3;
+}
+
+.cancel-button {
+    background-color: #e74c3c; /* Rojo para cancelar/eliminar */
+}
+
+.cancel-button:hover {
+    background-color: #c0392b;
+}
+
+.create-button {
+    margin-bottom: 20px; /* Espacio debajo del botón de crear */
+}
+
+/* Estilo específico para botones de acción en la tabla */
+.action-button.edit {
+     background-color: #6200ea;
+     padding: 6px 12px; /* Ajustar padding para botones pequeños */
+     margin-right: 5px;
+}
+
+.action-button.edit:hover {
+     background-color: #3700b3;
+}
+
+.action-button.delete {
+     background-color: #e74c3c;
+     padding: 6px 12px;
+}
+
+.action-button.delete:hover {
+     background-color: #c0392b;
+}
+
+.action-button:not(.edit):not(.delete) {
+     /* Estilo base para botones de acción que no son editar/eliminar (ej: Ver Detalles) */
+     background-color: #3a3a3a;
+     padding: 6px 12px;
+}
+
+.action-button:not(.edit):not(.delete):hover {
+     background-color: #4a4a4a;
+}
+
+
+/* Estilo para campos de formulario */
+.form-group input,
+.form-group textarea,
+.form-group select {
+    background-color: #333333;
+    color: #ffffff;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    width: calc(100% - 22px);
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #6200ea;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #cccccc;
+    font-weight: bold;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 10px; /* Ajustar espacio entre botones */
+    margin-top: 20px; /* Ajustar margen superior */
+     justify-content: flex-end; /* Alinear botones a la derecha si se desea */
+}
+
+/* Estilo para la tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background-color: #2a2a2a;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #444444;
+    color: #ffffff;
+}
+
+table th {
+    background-color: #333333;
+    font-weight: 600;
+    color: #cccccc;
+}
+
+table tr:hover {
+    background-color: #3a3a3a;
+}
+
+/* Estilo para los párrafos en la sección de detalles */
+.details-content p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    color: #ffffff;
+}
+
+/* Estilo para las etiquetas (strong) dentro de los detalles */
+.details-content p strong {
+    color: #cccccc;
+    margin-right: 5px;
+}
+
+/* Estilo para mensajes */
+.error-message {
+    color: #e74c3c;
+    margin-top: 10px;
+}
+
+.loading-message {
+    color: #cccccc;
+    margin-top: 10px;
+}
+
+/* Estilo para el overlay del modal (usar en el componente si se necesita overlay)*/
+/*
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+*/
+
+/* Estilo para el botón de cerrar modal si es un botón separado */
+.movimiento-details .close-button {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    background-color: #3a3a3a;
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.movimiento-details .close-button:hover {
+     background-color: #4a4a4a;
+} 

@@ -1,0 +1,181 @@
+/* mi-frontend/src/styles/admin/gestionUsuarios.css */
+
+/* Estilos generales para la página */
+.gestion-usuarios-container {
+    padding: 30px; /* Aumentar padding */
+    background: linear-gradient(to bottom right, #1e1e1e, #3a1c71); /* Usar un degradado sutil similar al del fondo del dashboard */
+    color: #ffffff; /* Texto blanco */
+    min-height: 100vh; /* Ocupar al menos toda la altura de la ventana */
+    font-family: sans-serif; /* Asegurar una fuente común */
+}
+
+.gestion-usuarios-container h1 {
+    color: #ffffff; /* Título blanco */
+    margin-bottom: 30px; /* Aumentar margen */
+    text-align: center; /* Centrar título */
+}
+
+.gestion-usuarios-container h2 {
+    color: #cccccc; /* Subtítulos gris claro */
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* Estilo para los contenedores de lista, creación y detalles/edición */
+.gestion-usuarios-card {
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+/* Estilo para los botones */
+.gestion-usuarios-container button {
+    background-color: #3a3a3a; /* Fondo de botón un poco más oscuro */
+    color: #ffffff; /* Texto de botón blanco */
+    border: none;
+    border-radius: 7px; /* Ajustar borde redondeado */
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.gestion-usuarios-container button:hover {
+    background-color: #4a4a4a; /* Ajustar hover */
+}
+
+.gestion-usuarios-container button:disabled {
+    background-color: #444444;
+    cursor: not-allowed;
+}
+
+/* Estilo para los botones de acción (Editar, Eliminar, Crear) */
+.gestion-usuarios-container button.action-button {
+    background-color: #6200ea; /* Un tono de púrpura similar al del dashboard */
+}
+
+.gestion-usuarios-container button.action-button:hover {
+    background-color: #3700b3; /* Ajustar hover */
+}
+
+.gestion-usuarios-container button.delete-button {
+    background-color: #e74c3c; /* Rojo para eliminar */
+}
+
+.gestion-usuarios-container button.delete-button:hover {
+    background-color: #c0392b;
+}
+
+/* Estilo para inputs y selects */
+.gestion-usuarios-container input[type="text"],
+.gestion-usuarios-container input[type="email"],
+.gestion-usuarios-container input[type="password"],
+.gestion-usuarios-container select {
+    background-color: #333333; /* Fondo de input oscuro */
+    color: #ffffff; /* Texto de input blanco */
+    border: 1px solid #444444; /* Ajustar borde de input */
+    border-radius: 5px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    width: calc(100% - 22px); /* Ajustar ancho considerando padding y borde */
+    box-sizing: border-box; /* Incluir padding y borde en el ancho */
+}
+
+.gestion-usuarios-container input[type="text"]:focus,
+.gestion-usuarios-container input[type="email"]:focus,
+.gestion-usuarios-container input[type="password"]:focus,
+.gestion-usuarios-container select:focus {
+    outline: none;
+    border-color: #6200ea; /* Borde de enfoque similar al color de acento */
+}
+
+/* Estilo para etiquetas */
+.gestion-usuarios-container label {
+    display: block;
+    margin-bottom: 5px;
+    color: #cccccc; /* Color de etiqueta gris claro */
+    font-weight: bold; /* Hacer etiquetas un poco más visibles */
+}
+
+/* Estilo para los párrafos en la sección de detalles */
+.gestion-usuarios-card p {
+    margin-bottom: 10px; /* Espacio entre los párrafos de detalles */
+    line-height: 1.6; /* Mejorar la legibilidad del texto */
+}
+
+/* Estilo para las etiquetas (strong) dentro de los detalles */
+.gestion-usuarios-card p strong {
+    color: #cccccc; /* Asegurar que las etiquetas en negrita tengan un color consistente */
+    margin-right: 5px; /* Espacio entre la etiqueta y el valor */
+}
+
+/* Estilo para la lista de usuarios */
+.gestion-usuarios-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Estilo para los elementos individuales de la lista */
+.gestion-usuarios-container li {
+    background-color: #3a3a3a; /* Fondo de elemento de lista */
+    border: 1px solid #555555; /* Restaurar el borde original */
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.gestion-usuarios-container li:hover {
+    background-color: #444444; /* Ajustar hover de lista */
+}
+
+.gestion-usuarios-container li.selected {
+    background-color: #362069; /* Fondo cuando está seleccionado, con color de énfasis más oscuro */
+    border-color: #321b68; /* Borde de selección con color de acento */
+}
+
+/* Estilo para mensajes de error */
+.gestion-usuarios-container .error-message {
+    color: #e74c3c; /* Rojo para errores */
+    margin-top: 10px;
+}
+
+/* Estilo para mensajes de carga */
+.gestion-usuarios-container .loading-message {
+    color: #cccccc; /* Gris claro para carga */
+    margin-top: 10px;
+}
+
+/* Estilo para los botones */
+.back-button,
+.create-button,
+.save-button,
+.cancel-button,
+.action-button,
+.close-button {
+    background-color: #3a3a3a;
+    color: #ffffff;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button {
+    margin-bottom: 20px; /* Added margin-bottom to separate from title */
+}
+
+.back-button:hover,
+.create-button:hover,
+.save-button:hover,
+.cancel-button:hover,
+.action-button:hover,
+.close-button:hover {
+    background-color: #4a4a4a; /* Ajustar hover */
+} 

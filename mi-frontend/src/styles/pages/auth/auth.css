@@ -3,12 +3,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #530a97 0%, #6b0db8 100%);
+    background: linear-gradient(135deg, #353535 20%, #430279 100%, #353535);
     padding: 2rem;
+    font-weight: bold;
 }
 
 .login-container {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgb(44, 44, 44);
     padding: 2rem;
     border-radius: 15px;
     backdrop-filter: blur(10px);
@@ -22,7 +23,7 @@
 }
 
 .login-header h1 {
-    color: white;
+    color: rgb(255, 255, 255);
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
 }
@@ -47,22 +48,24 @@
 .form-group label {
     color: white;
     font-size: 1rem;
+    font-weight:bold;
 }
 
 .form-group input {
     padding: 0.8rem;
     border: none;
     border-radius: 5px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(58, 58, 58, 0.9);
     font-size: 1rem;
+    border-radius: 15px;
 }
 
 .login-button {
     padding: 1rem;
     border: none;
-    border-radius: 5px;
-    background: white;
-    color: #530a97;
+    border-radius: 15px;
+    background: rgb(77, 19, 145);
+    color: #ffffff;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
@@ -70,7 +73,7 @@
 }
 
 .login-button:hover {
-    background: #f0f0f0;
+    background: rgba(78, 19, 145, 0.575);
     transform: translateY(-2px);
 }
 
@@ -88,18 +91,19 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgb(44, 44, 44);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    border-radius: 15px;
 }
 
 .loading-spinner {
-    background: white;
+    background: rgba(58, 58, 58, 0);
     padding: 1rem 2rem;
-    border-radius: 5px;
-    color: #530a97;
+    border-radius: 15px;
+    color: #ffffff;
     font-weight: bold;
 }
 

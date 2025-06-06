@@ -45,6 +45,11 @@ const hasAccessToRoute = (user, route) => {
     // Rutas públicas
     if (route === '/' || route === '/login') return true;
     
+    // Ruta de cambio de contraseña (accesible solo si es primer login)
+    if (route === '/change-password') {
+        return user.is_first_login === true;
+    }
+    
     // Rutas específicas por rol
     switch (userRole) {
         case ROLES.ADMIN:

@@ -21,22 +21,50 @@ export const AuthProvider = ({ children }) => {
             try {
                 console.log('AuthContext - Verificando autenticación');
                 const token = localStorage.getItem('token');
+                const storedUser = localStorage.getItem('user');
                 console.log('AuthContext - Token presente:', token ? 'Sí' : 'No');
+                console.log('AuthContext - Usuario almacenado:', storedUser ? 'Sí' : 'No');
                 
-                if (token) {
-                    // Intentar obtener los datos del usuario del localStorage
-                    const storedUser = localStorage.getItem('user');
-                    if (storedUser) {
-                        console.log('AuthContext - Usuario encontrado en localStorage:', JSON.parse(storedUser));
-                        setUser(JSON.parse(storedUser));
-                        setIsAuthenticated(true);
-                    } else {
-                        console.log('AuthContext - No hay datos de usuario almacenados');
+                if (token && storedUser) {
+                    try {
+                        // Intentar obtener los datos actualizados del usuario
+                        const userData = await getCurrentUser();
+                        console.log('AuthContext - Datos del usuario obtenidos:', userData);
+                        
+                        if (userData) {
+                            // Mantener el rol del usuario almacenado si existe
+                            const storedUserData = JSON.parse(storedUser);
+                            const formattedUserData = {
+                                id: userData.id,
+                                username: userData.username,
+                                email: userData.email,
+                                is_superuser: userData.is_superuser,
+                                is_staff: userData.is_staff,
+                                role: storedUserData.role || userData.role || 'empleado',
+                                is_first_login: userData.is_first_login === true
+                            };
+                            
+                            console.log('AuthContext - Datos del usuario formateados:', formattedUserData);
+                            console.log('AuthContext - Rol del usuario:', formattedUserData.role);
+                            
+                            // Guardar en localStorage
+                            localStorage.setItem('user', JSON.stringify(formattedUserData));
+                            setUser(formattedUserData);
+                            setIsAuthenticated(true);
+                        } else {
+                            throw new Error('No se pudieron obtener los datos del usuario');
+                        }
+                    } catch (error) {
+                        console.error('AuthContext - Error al obtener datos del usuario:', error);
+                        // Si hay error al obtener los datos del usuario, limpiar todo
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('refreshToken');
+                        localStorage.removeItem('user');
                         setUser(null);
                         setIsAuthenticated(false);
                     }
                 } else {
-                    console.log('AuthContext - No hay token, usuario no autenticado');
+                    console.log('AuthContext - No hay token o usuario almacenado, usuario no autenticado');
                     setUser(null);
                     setIsAuthenticated(false);
                 }
@@ -69,10 +97,14 @@ export const AuthProvider = ({ children }) => {
                     email: response.user.email,
                     is_superuser: response.user.is_superuser,
                     is_staff: response.user.is_staff,
-                    role: response.user.role || 'empleado' // Aseguramos que siempre haya un rol
+                    role: response.user.role || 'empleado',
+                    is_first_login: response.user.is_first_login === true
                 };
                 
                 console.log('AuthContext - Datos del usuario a guardar:', userData);
+                console.log('AuthContext - Rol del usuario:', userData.role);
+                
+                // Guardar en localStorage
                 localStorage.setItem('user', JSON.stringify(userData));
                 setUser(userData);
                 setIsAuthenticated(true);
@@ -87,6 +119,32 @@ export const AuthProvider = ({ children }) => {
             throw error;
         }
     };
+
+    const updateUserState = (updatedUserData) => {
+        console.log('AuthContext - Actualizando estado del usuario:', updatedUserData);
+        
+        // Mantener el rol actual si no se proporciona uno nuevo
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const userData = {
+            ...updatedUserData,
+            role: updatedUserData.role || currentUser.role || 'empleado',
+            is_first_login: updatedUserData.is_first_login === true
+        };
+        
+        console.log('AuthContext - Rol del usuario actualizado:', userData.role);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+    };
+
+    useEffect(() => {
+        const handleUserUpdate = (event) => {
+            console.log('AuthContext - Evento de actualización de usuario recibido:', event.detail);
+            updateUserState(event.detail);
+        };
+
+        window.addEventListener('userUpdated', handleUserUpdate);
+        return () => window.removeEventListener('userUpdated', handleUserUpdate);
+    }, []);
 
     const logout = async () => {
         try {
@@ -107,7 +165,8 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         loading,
         login,
-        logout
+        logout,
+        updateUserState
     };
 
     console.log('AuthContext - Estado actual:', { user, isAuthenticated, loading });

@@ -5,8 +5,10 @@ export const AUTH_ENDPOINTS = {
     LOGIN: '/auth/login/', // Endpoint para iniciar sesión
     LOGOUT: '/auth/logout/', // logout de la api
     REGISTER: '/auth/register/', // Endpoint para registrar un nuevo usuario
-    REFRESH: '/auth/token/refresh/',
-    CURRENT_USER: '/auth/user/'
+    REFRESH: '/token/refresh/',
+    CURRENT_USER: '/users/me/', // Endpoint para obtener el usuario actual
+    CHANGE_PASS: '/auth/change-password/',
+    CHANGE_PASS_FIRST_LOGIN: '/auth/first-login-change-password/'
 };
 
 // Endpoints de usuarios

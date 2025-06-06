@@ -2,7 +2,6 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/dashboard.css';
-import '../../styles/pages/roles/empleado.css';
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -31,19 +30,29 @@ const Dashboard = () => {
             <div className="dashboard-content">
                 <div className="dashboard-cards">
                     <div className="card">
-                        <h3>Inventario</h3>
-                        <p>Gestionar el inventario de productos</p>
+                        <h3>Gestión de Inventario</h3>
+                        <p>Control y gestión del inventario de productos y materiales</p>
                         <button className="card-button">Ver Inventario</button>
                     </div>
                     <div className="card">
-                        <h3>Reportes</h3>
-                        <p>Ver reportes de actividades</p>
+                        <h3>Reportes de Actividades</h3>
+                        <p>Ver y generar reportes de operaciones diarias</p>
                         <button className="card-button">Ver Reportes</button>
                     </div>
                     <div className="card">
-                        <h3>Perfil</h3>
-                        <p>Gestionar información personal</p>
-                        <button className="card-button">Editar Perfil</button>
+                        <h3>Solicitudes de Mantenimiento</h3>
+                        <p>Gestionar y dar seguimiento a solicitudes de mantenimiento</p>
+                        <button className="card-button">Ver Solicitudes</button>
+                    </div>
+                    <div className="card">
+                        <h3>Equipos Asignados</h3>
+                        <p>Ver y gestionar equipos bajo tu responsabilidad</p>
+                        <button className="card-button">Ver Equipos</button>
+                    </div>
+                    <div className="card">
+                        <h3>Calendario de Mantenimientos</h3>
+                        <p>Consultar agenda de mantenimientos programados</p>
+                        <button className="card-button">Ver Calendario</button>
                     </div>
                 </div>
             </div>

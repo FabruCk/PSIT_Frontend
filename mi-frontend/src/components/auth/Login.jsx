@@ -27,7 +27,7 @@ const Login = ({ onLogin, error }) => {
             {error && <div className="error-message">{error}</div>}
             
             <div className="form-group">
-                <label htmlFor="username">Usuario</label>
+                <label htmlFor="username">Usuario: </label>
                 <input
                     type="text"
                     id="username"
@@ -41,7 +41,7 @@ const Login = ({ onLogin, error }) => {
             </div>
 
             <div className="form-group">
-                <label htmlFor="password">Contraseña</label>
+                <label htmlFor="password">Contraseña: </label>
                 <input
                     type="password"
                     id="password"

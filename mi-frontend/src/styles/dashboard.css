@@ -1,105 +1,178 @@
-/* Estilos comunes para todos los dashboards */
-.dashboard {
+.dashboard,
+.admin-dashboard {
     min-height: 100vh;
-    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #353535 20%, #430279 100%, #353535);
+    padding: 2rem;
 }
 
+/* Encabezado del Dashboard */
 .dashboard-header {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background: rgb(33, 33, 33);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
 }
 
-.dashboard-header h1 {
-    color: #2c3e50;
+.title-panel {
+    font-size: 2rem;
+    color: #ffffff;
+    font-weight: 600;
     margin: 0;
+}
+
+.span-info {
+    font-weight: bold;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 1.5rem;
+}
+
+.user-info p {
+    margin-right: -10px;
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .user-info span {
-    color: #2c3e50;
-    font-weight: 500;
+    color: #ffffff;
+    font-size: 1.2rem;
 }
 
 .logout-button {
+    padding: 0.6rem 1.2rem;
     background-color: #e74c3c;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
+    border-radius: 13px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
 }
 
 .logout-button:hover {
     background-color: #c0392b;
 }
 
+/* Contenido del Dashboard */
 .dashboard-content {
-    padding: 20px 0;
+    padding: 1rem 0;
 }
 
+/* Grid de Tarjetas */
 .dashboard-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
 }
 
+/* Tarjetas Individuales */
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s;
+    background: rgb(45, 45, 45);
+    border-radius: 20px;
+    padding: 1.8rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .card h3 {
-    color: #2c3e50;
-    margin-top: 0;
+    color: #ffffff;
+    font-size: 1.4rem;
+    margin: 0;
+    font-weight: 600;
 }
 
 .card p {
-    color: #7f8c8d;
-    margin-bottom: 20px;
+    color: #a1a1a1;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
 }
 
 .card-button {
+    padding: 0.8rem 1.2rem;
+    background-color: #414141;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: auto;
 }
 
+.card-button:hover {
+    background-color: #380066a1;
+    transform: translateY(-2px);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+    .dashboard,
+    .admin-dashboard {
+        padding: 1rem;
+    }
+
     .dashboard-header {
         flex-direction: column;
-        gap: 15px;
+        gap: 1rem;
         text-align: center;
+        padding: 1rem;
     }
 
     .user-info {
         flex-direction: column;
-        gap: 10px;
+        gap: 1rem;
     }
 
     .dashboard-cards {
         grid-template-columns: 1fr;
     }
-} 
+
+    .title-panel {
+        font-size: 1.6rem;
+    }
+}
+
+/* Estilos para el estado de carga */
+.dashboard > div:first-child,
+.admin-dashboard > div:first-child {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+    font-size: 1.2rem;
+}

@@ -14,6 +14,7 @@ export const login = async (credentials) => {
         const response = await api.post(AUTH_ENDPOINTS.LOGIN, loginData);
         console.log('authService login - Respuesta completa de la API:', response);
         console.log('authService login - Datos de la respuesta de la API:', response.data);
+        console.log('authService login - is_first_login en respuesta:', response.data.user?.is_first_login);
 
         // Verificar si tenemos tokens en la respuesta
         if (response.data && response.data.tokens && response.data.tokens.access) {
@@ -33,13 +34,17 @@ export const login = async (credentials) => {
                 id: response.data.user.id,
                 username: response.data.user.username,
                 email: response.data.user.email,
-                // Asegurarse de incluir is_superuser e is_staff si existen en la respuesta
                 is_superuser: response.data.user.is_superuser !== undefined ? response.data.user.is_superuser : false,
                 is_staff: response.data.user.is_staff !== undefined ? response.data.user.is_staff : false,
-                role: response.data.user.role || null // Usamos el rol del backend o null
+                role: response.data.user.role || null,
+                is_first_login: response.data.user.is_first_login === true // Forzar a booleano
             };
             
             console.log('authService login - Datos del usuario formateados para retorno:', userData);
+            console.log('authService login - is_first_login en userData:', userData.is_first_login);
+            
+            // Guardar los datos del usuario en localStorage
+            localStorage.setItem('user', JSON.stringify(userData));
             
             return {
                 access: response.data.tokens.access,
@@ -84,8 +89,8 @@ export const logout = async () => {
         // Continuar con la limpieza del frontend aunque el backend falle el logout
     } finally {
         console.log('authService logout - Limpiando tokens y header de autorización en frontend.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
         delete api.defaults.headers.common['Authorization'];
         console.log('authService logout - Limpieza de frontend completada.');
     }
@@ -131,8 +136,24 @@ export const getCurrentUser = async () => {
         }
 
         const response = await api.get(AUTH_ENDPOINTS.CURRENT_USER);
-        console.log('authService getCurrentUser - Datos del usuario:', response.data);
-        return response.data;
+        console.log('authService getCurrentUser - Respuesta de la API:', response.data);
+        
+        // Asegurarnos de que los datos del usuario estén en el formato correcto
+        const userData = {
+            id: response.data.id,
+            username: response.data.username,
+            email: response.data.email,
+            is_superuser: response.data.is_superuser !== undefined ? response.data.is_superuser : false,
+            is_staff: response.data.is_staff !== undefined ? response.data.is_staff : false,
+            role: response.data.role || 'empleado', // Aseguramos que el rol esté incluido
+            is_first_login: response.data.is_first_login === true // Forzar a booleano
+        };
+
+        console.log('authService getCurrentUser - Datos del usuario formateados para retorno:', userData);
+        console.log('authService getCurrentUser - Rol del usuario:', userData.role);
+        console.log('authService getCurrentUser - is_first_login:', userData.is_first_login);
+
+        return userData;
     } catch (error) {
         console.error('authService getCurrentUser - Error al obtener usuario actual:', error);
         console.error('authService getCurrentUser - Detalles del error:', {
@@ -179,5 +200,64 @@ export const refreshToken = async () => {
         // Esto podría significar que el usuario necesita loggearse de nuevo
         // No hacemos la limpieza aquí, eso lo maneja el interceptor o el componente de logout si es necesario
         throw error; // Relanzar el error para que el interceptor o quien llame lo maneje
+    }
+};
+
+export const changeFirstLoginPassword = async (currentPassword, newPassword) => {
+    try {
+        // Asegurarnos de que el token esté presente
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('No hay token de autenticación');
+        }
+
+        // Formatear los datos exactamente como los espera el backend
+        const requestData = {
+            old_password: currentPassword,
+            new_password: newPassword,
+            confirm_password: newPassword
+        };
+
+        console.log('authService changeFirstLoginPassword - Enviando datos:', requestData);
+
+        const response = await api.post(AUTH_ENDPOINTS.CHANGE_PASS_FIRST_LOGIN, requestData);
+        console.log('authService changeFirstLoginPassword - Respuesta:', response.data);
+
+        if (response.data && response.data.status === 'success') {
+            // Obtener los datos actualizados del usuario
+            const userData = await getCurrentUser();
+            console.log('authService changeFirstLoginPassword - Datos actualizados del usuario:', userData);
+            
+            if (userData) {
+                // Forzar is_first_login a false ya que acabamos de cambiar la contraseña
+                userData.is_first_login = false;
+                
+                // Actualizar el estado del usuario en localStorage
+                localStorage.setItem('user', JSON.stringify(userData));
+                
+                // Actualizar el estado en el contexto de autenticación
+                const event = new CustomEvent('userUpdated', { 
+                    detail: userData
+                });
+                window.dispatchEvent(event);
+
+                // Actualizar el header de autorización
+                api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            }
+
+            return {
+                ...response.data,
+                user: userData
+            };
+        } else {
+            throw new Error(response.data?.message || 'Error al cambiar la contraseña');
+        }
+    } catch (error) {
+        console.error('authService changeFirstLoginPassword - Error:', error);
+        if (error.response?.data) {
+            console.error('authService changeFirstLoginPassword - Detalles del error:', error.response.data);
+            throw error.response.data;
+        }
+        throw error;
     }
 }; 
